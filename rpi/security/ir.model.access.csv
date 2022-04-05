@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_rpi_rpi,rpi.rpi,model_rpi_rpi,base.group_user,1,1,1,1
+access_rpi_cities,rpi.cities,model_rpi_cities,base.group_user,1,1,1,1
+access_rpi_regions,rpi.regions,model_rpi_regions,base.group_user,1,1,1,1
+access_rpi_land,rpi.land,model_rpi_land,base.group_user,1,1,1,1
+access_rpi_bulding,rpi.bulding,model_rpi_bulding,base.group_user,1,1,1,1
+access_rpi_unit,rpi.unit,model_rpi_unit,base.group_user,1,1,1,1
+access_rpi_building_stutes,rpi.building.stutes,model_rpi_building_stutes,base.group_user,1,1,1,1
+access_rpi_building_type,rpi.building.type,model_rpi_building_type,base.group_user,1,1,1,1

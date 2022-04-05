@@ -1,0 +1,533 @@
+<odoo>
+  <data>
+                <!-- Country form veiw --> 
+    <record model="ir.ui.view" id="rpi_rpi_view_form">
+      <field name="name">rpi.rpi.view.form</field>
+      <field name="model">rpi.rpi</field>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+      <form>
+        <header/>
+        <sheet string="Countries">
+          <div class="oe_title">
+                      <h1>
+                          <field name="name" required="1" placeholder="Name..."/>
+                      </h1>
+                  </div>
+          <group >
+            <field name="density" placeholder="Population Density" />
+             <field name="area" placeholder="Land Area m^2"/>
+          </group>
+        </sheet>
+        <div class="oe_chatter" name="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="message_ids"/>
+          <field name="activity_ids"/>
+        </div>
+     </form>
+      </field>
+      </record>
+      
+
+      
+             <!-- Country list veiw --> 
+     <record model="ir.ui.view" id="rpi_rpi_view_list">
+      <field name="name">rpi.rpi.view.list</field>
+      <field name="model">rpi.rpi</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="density"/>
+          <field name="area"/>
+
+        </tree>
+      </field>
+     </record>
+      
+      
+              <!-- city form veiw --> 
+      <record model="ir.ui.view" id="rpi_cities_view_form">
+      <field name="name">rpi.cities.view.form</field>
+      <field name="model">rpi.cities</field>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+        <form>
+            <header/>
+           <sheet string="city">
+    <div class="oe_title">
+                <h1>
+                    <field name="name" required="1" placeholder="Name..."/>
+                    
+                </h1>
+            </div>
+        <group >
+            <field name="density"  />
+            <field name="area" />
+            <field name="country_id" />
+          </group>
+  </sheet>
+        <notebook>
+        <page string="Geoloation" >
+      </page>
+      </notebook>
+
+  <div class="oe_chatter" name="oe_chatter">
+    <field name="message_follower_ids"/>
+    <field name="message_ids"/>
+    <field name="activity_ids"/>
+  </div>
+
+        </form>
+      </field>
+    </record>
+
+      
+      
+             <!-- city list veiw --> 
+    <record model="ir.ui.view" id="rpi_cities_view_list">
+      <field name="name">rpi.cities.view.list</field>
+      <field name="model">rpi.cities</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="density" optional="show"/>
+          <field name="area" optional="show"/>
+          <field name="country_id" optional="show"/>
+       </tree>
+      </field>
+    </record>
+      
+ 
+      
+      
+        <!-- regions form veiw --> 
+      <record model="ir.ui.view" id="rpi_regions_view_form">
+      <field name="name">rpi.regions.view.form</field>
+      <field name="model">rpi.regions</field>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+        <form>
+            <header/>
+           <sheet string="Regions">
+    <div class="oe_title">
+                <h1>
+                    <field name="name" required="1" placeholder="Name..."/>
+                    
+                </h1>
+            </div>
+        <group >
+            <field name="city_id" />
+            <field name="country_id" />
+          </group>
+  </sheet>
+
+
+  <div class="oe_chatter" name="oe_chatter">
+    <field name="message_follower_ids"/>
+    <field name="message_ids"/>
+    <field name="activity_ids"/>
+  </div>
+
+        </form>
+      </field>
+    </record>
+      
+      
+      
+      
+          <!-- regions list veiw --> 
+
+   <record model="ir.ui.view" id="rpi_regions_view_list">
+      <field name="name">rpi.regions.view.list</field>
+      <field name="model">rpi.regions</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="city_id" />
+        <field name="country_id" />
+
+        </tree>
+      </field>
+     </record>     
+      
+      
+ <!-- bulding form veiw --> 
+      <record model="ir.ui.view" id="rpi_bulding_view_form">
+      <field name="name">rpi.bulding.view.form</field>
+      <field name="model">rpi.bulding</field>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+        <form>
+            <header/>
+           <sheet string="Bulding">
+    <div class="oe_title">
+                <h1>
+                    <field name="name" required="1" placeholder="Name..."/>
+                    
+                </h1>
+            </div>
+        <group >
+      <group name="left">
+            <field name="code"  />
+            <field name="region_id" />
+            <field name="city_id" />
+            <field name="country_id" />
+          </group>
+
+      <group name="right">
+            <field name="purchase_date" />
+            <field name="sale_date" />
+           <!-- <field name="active" /> -->
+          </group>
+          </group>
+
+  </sheet>
+        <notebook>
+        <page string="Basic Information" >
+          <group>
+          <group name="left">
+            <field name="bulding_type" />
+            <field name="bulding_stutes_id" />
+            <field name="building_area" />
+            <field name="land_area" />
+            <field name="construction_year" />
+            <field name="lift" />
+            <field name="price" />
+            <field name="bulding_sketch" />
+            <field name="attachments"  widget="many2many_binary"/>
+              
+          </group>
+
+          <group name="right">
+            <field name="surface" />
+            <field name="garage" />
+            <field name="garden" />
+          </group>
+
+        </group>
+
+      </page>
+       <page string="Additional Information" >
+          <group>
+          <group>
+            <field name="license_code" />
+            <field name="license_date" />
+            <field name="date_notarization" />
+            <field name="license_notarization" />
+        </group>       
+        </group>           
+
+      </page>
+            
+       <page string="Geoloation" >
+          <group>       
+        </group>           
+
+      </page>
+       <page string="note" >
+          <group>  
+        <field name="note" />
+        </group>           
+      </page>            
+      </notebook>
+
+  <div class="oe_chatter" name="oe_chatter">
+    <field name="message_follower_ids"/>
+    <field name="message_ids"/>
+    <field name="activity_ids"/>
+  </div>
+
+        </form>
+      </field>
+    </record>
+    
+  
+      
+      
+          <!-- bulding list veiw --> 
+      <record model="ir.ui.view" id="rpi_bulding_view_list">
+      <field name="name">rpi.bulding.view.list</field>
+      <field name="model">rpi.bulding</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="code" />
+        <field name="region_id" />
+        <field name="city_id" />
+        <field name="country_id" />
+    
+
+        </tree>
+      </field>
+     </record>   
+         
+      
+      
+      
+              <!-- land form veiw --> 
+    <record model="ir.ui.view" id="rpi_land_view_form">
+      <field name="name">rpi.land.view.form</field>
+      <field name="model">rpi.land</field>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+      <form>
+        <header/>
+        <sheet string="Countries">
+          <div class="oe_title">
+                      <h1>
+                          <field name="name" required="1" placeholder="Name..."/>
+                      </h1>
+                  </div>
+          <group >
+            <field name="area" />
+              <field name="land_type" />
+              <field name="region_id"/>
+              <field name="city_id" />
+              <field name="country_id"/>
+
+          </group>
+        </sheet>
+        <div class="oe_chatter" name="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="message_ids"/>
+          <field name="activity_ids"/>
+        </div>
+          <notebook>
+        <page string="Basic Information" >
+          <group>
+          <group name="left">
+              <field name="attachments"  widget="many2many_binary"/>
+              <field name="license_code" />
+              <field name="license_date" />
+              <field name="date_notarization" />
+              <field name="license_notarization" />
+              <field name="land_sketch"/>
+
+              </group>
+              <group>
+               <field name="owner"/>
+                <field name="price"/>
+
+            </group>
+              </group>
+             </page>
+             </notebook>
+     </form>
+      </field>
+      </record>
+      
+      
+      
+      
+       <!-- land list veiw --> 
+      <record model="ir.ui.view" id="rpi_land_view_list">
+      <field name="name">rpi.land.view.list</field>
+      <field name="model">rpi.land</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="area" />
+        <field name="region_id" />
+        <field name="city_id" />
+        <field name="country_id" />
+    
+
+        </tree>
+      </field>
+     </record>   
+
+      
+      
+      
+   
+
+ 
+              <!-- unit form veiw --> 
+    
+      
+      <record model="ir.ui.view" id="rpi_unit_view_form">
+      <field name="name">rpi.unit.view.form</field>
+      <field name="model">rpi.unit</field>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+        <form>
+            <header/>
+           <sheet string="Unit">
+    <div class="oe_title">
+                <h1>
+                    <field name="name" required="1" placeholder="Name..."/>
+                    
+                </h1>
+            </div>
+        <group >
+      <group name="left">
+            
+            <field name="publish"/>
+          </group>
+
+      <group name="right">
+            <field name="country_id" />
+            <field name="city_id" />
+            <field name="bulding_id" />
+            <field name="region_id" />
+          </group>
+          <group >  
+          </group>
+          </group>
+
+  </sheet>
+        <notebook>
+        <page string="Basic Information" >
+          <group>
+          <group name="left">
+              <field name="attachments"  widget="many2many_binary"/>
+              <field name="unit_type" />
+              <field name="rental_fee" />
+              <field name="insurance_fee" />
+              <field name="unit_stutes_id" />
+              <field name="building_unit_area" />
+              <field name="land_area" />
+              <field name="net_area" />
+              <field name="construction_year" />
+              <field name="lift" />
+              <field name="air_condition" />
+              <field name="no_rooms" />
+              <field name="telephone" />
+              <field name="internet" />
+              <field name="price" />
+              <field name="floor" />
+
+          </group>
+
+          <group name="right">
+              <field name="surface" />
+              <field name="garage" />
+              <field name="garden" />
+              <field name="balaconies" />
+              <field name="solar" />
+              <field name="heating_source" />
+              <field name="electricity_meter" />
+              <field name="water_meter" />
+              <field name="unit_sketch"/>
+          </group>
+        </group>
+
+      </page>
+       <page string="Components list" >
+          <group>
+          <group>
+
+        </group>       
+        </group>           
+      </page>
+            
+       <page string="Additional InformationGeoloation" >
+          <group> 
+          <group> 
+              <field name="license_notarization" />
+              <field name="license_date" />
+              <field name="license_notarization" />
+              <field name="license_notarization" />
+
+
+        </group>                         
+        </group>           
+      </page>
+       <page string="Geoloation" >
+          <group>  
+        </group>           
+      </page>  
+            
+       <page string="Contacts" >
+          <group> 
+          <group> 
+
+            <field name="contacts" />
+        </group>           
+        </group>           
+      </page> 
+      <page string="Prorty Multiple Images" >
+          <group> 
+              
+                <group name="proprty_template_images"  >
+                    <field name="proprty_template_image_ids" class="o_website_sale_image_list" context="{'default_name': name}" mode="kanban" add-label="Add a Media" nolabel="1"/>
+                </group>
+            
+        </group>           
+      </page> 
+         
+      </notebook>
+
+  <div class="oe_chatter" name="oe_chatter">
+    <field name="message_follower_ids"/>
+    <field name="message_ids"/>
+    <field name="activity_ids"/>
+  </div>
+
+        </form>
+      </field>
+    </record>
+    
+      
+      
+      
+             <!-- unit list veiw --> 
+    <record model="ir.ui.view" id="rpi_unit_view_list">
+      <field name="name">rpi.unit.view.list</field>
+      <field name="model">rpi.unit</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="code" />
+          <field name="bulding_id"/>
+          <field name="region_id"/>
+          <field name="city_id"/>
+          <field name="country_id" />
+          <field name="unit_type" />
+          <field name="unit_stutes_id" />
+          <field name="no_rooms" />
+          <field name="no_rooms" />
+       </tree>
+      </field>
+    </record>  
+      
+
+      
+      
+      
+      
+                  <!-- status form veiw --> 
+    <record model="ir.ui.view" id="rrpi_building_stutes_view_form">
+      <field name="name">rrpi.building.stutes.view.form</field>
+      <field name="model">rpi.building.stutes</field>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+      <form>
+        <header/>
+        <sheet string="Countries">
+          <div class="oe_title">
+                      <h1>
+                          <field name="name" required="1" placeholder="Name..."/>
+                      </h1>
+                  </div>
+        </sheet>
+        <div class="oe_chatter" name="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="message_ids"/>
+          <field name="activity_ids"/>
+        </div>
+     </form>
+      </field>
+      </record>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  </data>
+</odoo>
