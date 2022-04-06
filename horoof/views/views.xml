@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="horoof.list">
+      <field name="name">horoof list</field>
+      <field name="model">horoof.horoof</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="horoof.action_window">
+      <field name="name">horoof window</field>
+      <field name="res_model">horoof.horoof</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="horoof.action_server">
+      <field name="name">horoof server</field>
+      <field name="model_id" ref="model_horoof_horoof"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="horoof" id="horoof.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="horoof.menu_1" parent="horoof.menu_root"/>
+    <menuitem name="Menu 2" id="horoof.menu_2" parent="horoof.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="horoof.menu_1_list" parent="horoof.menu_1"
+              action="horoof.action_window"/>
+    <menuitem name="Server to list" id="horoof" parent="horoof.menu_2"
+              action="horoof.action_server"/>
+-->
+  </data>
+</odoo>
