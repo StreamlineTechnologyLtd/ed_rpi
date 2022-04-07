@@ -13,9 +13,43 @@ class ProductTemplate(models.Model):
     type = fields.Selection(selection_add=[
         ('proprty', 'Proprty')
     ], ondelete={'proprty': 'set consu'})
-    
-    
 
+    
+class Project(models.Model):
+    _inherit = ['project.update']   
+    
+    status = fields.Selection(selection_add=[
+        ('done', 'Done')], tracking=True, ondelete={'done': 'set on_hold'})
+    
+    
+    
+class Project(models.Model):
+    _inherit = ['project.project']
+    
+    def _get_default_currency_id(self):
+        return self.env.company.currency_id.id
+    
+    last_update_status = fields.Selection(selection_add=[
+        ('done', 'Done')
+    ], tracking=True, ondelete={'done': 'set on_hold'})
+    
+    
+    currency_id = fields.Many2one("res.currency", string="Valuta", required=True ,default = _get_default_currency_id)
+    proprty_price = fields.Monetary(string = 'New proprty price',currency_field="currency_id")
+    related_land = fields.Many2one ('rpi.land',string='Bulding')
+    related_bulding = fields.Many2one ('rpi.bulding',string='Bulding')
+    related_unit = fields.Many2one ('rpi.unit',string='Bulding')
+
+    Land_status = fields.Selection(related='related_land.land_status', string="Land Status")
+    bulding_status = fields.Selection(related='related_bulding.bulding_status', string="Bulding Status")
+    unit_status = fields.Selection(related='related_unit.unit_status', string="Unit Status")
+    
+    
+    @api.depends('')
+    def status(self, vals):
+        for project in self :
+            if vals['project.last_update_status'] == 'done':
+                vals['Land_status'] or vals['bulding_status'] or vals['unit_status'] == 'free'
     
 
 class Countries(models.Model):
@@ -23,7 +57,7 @@ class Countries(models.Model):
     _description = 'rpi.rpi'
     _inherit = ['mail.thread','mail.activity.mixin']
 
-    name = fields.Char(string='Country Name')
+    name = fields.Char(string='Country Name', tracking=True)
     density = fields.Integer(string='Population Density')
     area = fields.Float( string='Land Area m^2')
     city = fields.One2many('rpi.cities', 'country_id', string = 'Cities')
@@ -38,7 +72,7 @@ class Countries(models.Model):
 class Cities(models.Model):
     _name = 'rpi.cities'
     _inherit = ['mail.thread','mail.activity.mixin']
-    name = fields.Char(string='Full Name')
+    name = fields.Char(string='Full Name', tracking=True)
     density = fields.Integer(string ='Population Density')
     area = fields.Float(string='Land Area m^2')
     region = fields.One2many('rpi.regions' , 'city_id' , string = 'Regions')
@@ -64,13 +98,17 @@ class Regions(models.Model):
         return self.env.company.currency_id.id
     
     currency_id = fields.Many2one("res.currency", string="Valuta", required=True ,default = _get_default_currency_id)
-    name = fields.Char(string='Region Name')
+    name = fields.Char(string='Region Name', tracking=True)
     area = fields.Float(string='Land Area m^2')
     land = fields.One2many('rpi.land' ,'region_id' , string = 'Lands' )
     city_id = fields.Many2one('rpi.cities', string = 'City')
     country_id = fields.Many2one('rpi.rpi', string = 'Country ')
     unit = fields.One2many('rpi.unit', 'region_id', string = 'Bulding')    
-    
+    def unlink(self):
+        for region in self:
+            if len(region.land) > 0:
+                raise ValidationError('This record is linked to another,cannot be deleted.')
+        return super(Regions, self).unlink()
     
     
     
@@ -82,7 +120,7 @@ class Land(models.Model):
     def _get_default_currency_id(self):
         return self.env.company.currency_id.id
     currency_id = fields.Many2one("res.currency", string="Valuta", required=True, default = _get_default_currency_id)
-    name = fields.Char(string='Land Name')
+    name = fields.Char(string='Land Name', tracking=True)
     area = fields.Float(string='Land Area m^2')
     owner = fields.Many2one ('res.partner' , string = 'Owner')
     city_id = fields.Many2one('rpi.cities', string = 'City')
@@ -104,9 +142,16 @@ class Land(models.Model):
         ('internalf', 'Internal fixed assets'),
         ('internali', 'Internal investment assets'),
         ('external', 'External proprties'),
-        ], string='Type')
+        ], string='Type', tracking=True)
+    land_status = fields.Selection([
+        ('free', 'Free'),
+        ('rented', 'Rented'),
+        ('progress', 'Under progress'),
+        ('loan', 'Under Loan'),
+        ], string='Type', tracking=True)
     related_product = fields.Many2one('product.product')
     related_asset = fields.Many2one('account.asset')
+    related_project = fields.Many2one('project.project')
     
     @api.model
     def create(self, vals):
@@ -116,17 +161,28 @@ class Land(models.Model):
         if vals['land_type'] == 'internalf':
             product_info ={'name':vals['name'], 'asset_type': 'purchase'}
             vals['related_asset'] = self.env['account.asset'].create(product_info).id
+        if vals['land_status'] == 'progress':
+            product_info ={'name':vals['name']}
+            vals['related_project'] = self.env['project.project'].create(product_info).id 
         result = super(Land,self).create(vals)
-        return result     
+        return result  
     
-
-    
-    
+  
     def unlink(self):
         for land in self:
             self.env['product.product'].browse(land.related_product.id).unlink()
             self.env['account.asset'].browse(land.related_asset.id).unlink()
-        return super(Land,self).unlink()     
+            self.env['project.project'].browse(land.related_project.id).unlink()
+        return super(Land,self).unlink()  
+    
+    def action_rented_button(self):
+        self.land_status = 'rented'
+    
+    def action_progress_button(self):
+        self.land_status = 'progress'
+    
+    def action_loan_button(self):
+        self.land_status = 'loan'
     
     
     
@@ -144,7 +200,7 @@ class Bulding(models.Model):
         return self.env.company.currency_id.id
     
     currency_id = fields.Many2one("res.currency", string="Valuta", required=True, default = _get_default_currency_id)
-    name = fields.Char(string='Bulding Name')
+    name = fields.Char(string='Bulding Name', tracking=True)
     code = fields.Char(string='Code')
     land_area = fields.Float(string='Land Area m^2')
     building_area = fields.Float(string='Building Area m^3')
@@ -176,9 +232,16 @@ class Bulding(models.Model):
         ('internalf', 'Internal fixed assets'),
         ('internali', 'Internal investment assets'),
         ('external', 'External proprties'),
-        ], string='Type')
+        ], string='Type', tracking=True)
+    bulding_status = fields.Selection([
+        ('free', 'Free'),
+        ('rented', 'Rented'),
+        ('progress', 'Under progress'),
+        ('loan', 'Under Loan'),
+        ],default='free', string='Type', tracking=True)
     related_product = fields.Many2one('product.product')
     related_asset = fields.Many2one('account.asset')
+    related_project = fields.Many2one('project.project')
     
     @api.model
     def create(self, vals):
@@ -188,14 +251,27 @@ class Bulding(models.Model):
         if vals['bulding_type'] == 'internalf':
             product_info ={'name':vals['name'], 'asset_type': 'purchase'}
             vals['related_asset'] = self.env['account.asset'].create(product_info).id
+        if vals['bulding_status'] == 'progress':
+            product_info ={'name':vals['name']}
+            vals['related_project'] = self.env['project.project'].create(product_info).id 
         result = super(Bulding,self).create(vals)
         return result  
+    
+    def action_rented_button(self):
+        self.bulding_status = 'rented'
+    
+    def action_progress_button(self):
+        self.bulding_status = 'progress'
+    
+    def action_loan_button(self):
+        self.bulding_status = 'loan'
     
   
     def unlink(self):
         for building in self:
             self.env['product.product'].browse(building.related_product.id).unlink()
             self.env['account.asset'].browse(building.related_asset.id).unlink()
+            self.env['project.project'].browse(building.related_project.id).unlink()
         return super(Bulding,self).unlink() 
     
 
@@ -203,7 +279,7 @@ class Bulding(models.Model):
 class MultiImage(models.Model):
     _inherit = "product.image"
     proprty_tmpl_id = fields.Many2one('rpi.unit', "Propprty Template", index=True, ondelete='cascade')
-    name = fields.Char("Name", required=False)
+    name = fields.Char("Name", required=False, tracking=True)
     image_1920 = fields.Image(required=False)
 
     
@@ -218,7 +294,7 @@ class Unit(models.Model):
         return self.env.company.currency_id.id
     proprty_template_image_ids = fields.One2many('product.image', 'proprty_tmpl_id', string="Extra Product Media", copy=True)
     currency_id = fields.Many2one("res.currency", string="Valuta", required=True, default = _get_default_currency_id)    
-    name = fields.Char(string='Unit Name')
+    name = fields.Char(string='Unit Name', tracking=True)
     bulding_id = fields.Many2one ('rpi.bulding',string = 'Bulding')
     owner = fields.Many2one ('res.partner' , string = 'Owner')
     region_id = fields.Many2one ('rpi.regions', string = 'Region')
@@ -266,9 +342,16 @@ class Unit(models.Model):
         ('internalf', 'Internal fixed assets'),
         ('internali', 'Internal investment assets'),
         ('external', 'External proprties'),
-        ], string='Type')
+        ], string='Type', tracking=True)
+    unit_status = fields.Selection([
+        ('free', 'Free'),
+        ('rented', 'Rented'),
+        ('progress', 'Under progress'),
+        ('loan', 'Under Loan'),
+        ], string='Type', tracking=True)
     related_product = fields.Many2one('product.product')
     related_asset = fields.Many2one('account.asset')
+    related_project = fields.Many2one('project.project')
     
     @api.model
     def create(self, vals):
@@ -278,6 +361,9 @@ class Unit(models.Model):
         if vals['unit_type'] == 'internalf':
             product_info ={'name':vals['name'], 'asset_type': 'purchase'}
             vals['related_asset'] = self.env['account.asset'].create(product_info).id
+        if vals['unit_status'] == 'progress':
+            product_info ={'name':vals['name']}
+            vals['related_project'] = self.env['project.project'].create(product_info).id 
         result = super(Unit,self).create(vals)
         return result   
     
@@ -285,7 +371,21 @@ class Unit(models.Model):
         for unit in self:
             self.env['product.product'].browse(unit.related_product.id).unlink()
             self.env['account.asset'].browse(unit.related_asset.id).unlink()
-        return super(Unit,self).unlink()    
+            self.env['project.project'].browse(unit.related_project.id).unlink()
+        return super(Unit,self).unlink() 
+    
+    
+    def action_rented_button(self):
+        self.unit_status = 'rented'
+    
+    def action_progress_button(self):
+        self.unit_status = 'progress'
+    
+    def action_loan_button(self):
+        self.unit_status = 'loan'
+        
+        
+        
     
 class BuildingStatus(models.Model):
     _name = 'rpi.building.stutes'
@@ -312,7 +412,7 @@ class BuildingType(models.Model):
     _name = 'rpi.building.type'
     _inherit = ['mail.thread','mail.activity.mixin']
     _description = 'Building Type'
-    _order = 'sequence'
+    _order = 'sequence'#
 
     name = fields.Char(required=True, translate=True)
     sequence = fields.Integer(default=10)

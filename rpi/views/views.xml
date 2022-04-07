@@ -1,12 +1,30 @@
 <odoo>
   <data>
+      
+                <!-- Country form veiw --> 
+<!-- 
+ <record id="inherited_project_product_view_form" model="ir.ui.view">
+    <field name="name">project.project.form.inherit</field>
+    <field name="model">project.project</field>
+    <field name="inherit_id" ref="project.edit_project"/>
+    <field name="arch" type="xml">
+        
+  <xpath expr="//field[@name='allowed_internal_user_ids']" position="after">
+    <field name="x_studio_char_field_S7BzN"/>
+  </xpath>
+     </field>
+</record>
+      
+ -->     
+      
+      
                 <!-- Country form veiw --> 
     <record model="ir.ui.view" id="rpi_rpi_view_form">
       <field name="name">rpi.rpi.view.form</field>
       <field name="model">rpi.rpi</field>
       <field name="mode">primary</field>
       <field name="arch" type="xml">
-      <form>
+      <form sample="1">
         <header/>
         <sheet string="Countries">
           <div class="oe_title">
@@ -35,7 +53,7 @@
       <field name="name">rpi.rpi.view.list</field>
       <field name="model">rpi.rpi</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree sample="1">
           <field name="name"/>
           <field name="density"/>
           <field name="area"/>
@@ -51,7 +69,7 @@
       <field name="model">rpi.cities</field>
       <field name="mode">primary</field>
       <field name="arch" type="xml">
-        <form>
+        <form sample="1">
             <header/>
            <sheet string="city">
     <div class="oe_title">
@@ -88,7 +106,7 @@
       <field name="name">rpi.cities.view.list</field>
       <field name="model">rpi.cities</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree sample="1">
           <field name="name" />
           <field name="density" optional="show"/>
           <field name="area" optional="show"/>
@@ -106,7 +124,7 @@
       <field name="model">rpi.regions</field>
       <field name="mode">primary</field>
       <field name="arch" type="xml">
-        <form>
+        <form sample="1">
             <header/>
            <sheet string="Regions">
     <div class="oe_title">
@@ -141,7 +159,7 @@
       <field name="name">rpi.regions.view.list</field>
       <field name="model">rpi.regions</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree sample="1">
           <field name="name"/>
           <field name="city_id" />
         <field name="country_id" />
@@ -157,10 +175,15 @@
       <field name="model">rpi.bulding</field>
       <field name="mode">primary</field>
       <field name="arch" type="xml">
-        <form>
-            <header/>
+        <form sample="1">
+            <header>
+                <button id="button_rented" name="action_rented_button" string="Rent" class="btn-primary" type="object"/>
+                <button id="button_progress" name="action_progress_button" string="Project" class="btn-primary" type="object"/>
+                <button id="button_loan" name="action_loan_button" string="Loan" class="btn-primary" type="object"/>
+                <field name="bulding_status" widget="statusbar"/>
+           </header>
            <sheet string="Bulding">
-    <div class="oe_title">
+     <div class="oe_title">
                 <h1>
                     <field name="name" required="1" placeholder="Name..."/>
                     
@@ -177,7 +200,6 @@
       <group name="right">
             <field name="purchase_date" />
             <field name="sale_date" />
-           <!-- <field name="active" /> -->
           </group>
           </group>
 
@@ -249,7 +271,7 @@
       <field name="name">rpi.bulding.view.list</field>
       <field name="model">rpi.bulding</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree sample="1">
           <field name="name"/>
           <field name="code" />
         <field name="region_id" />
@@ -270,8 +292,13 @@
       <field name="model">rpi.land</field>
       <field name="mode">primary</field>
       <field name="arch" type="xml">
-      <form>
-        <header/>
+      <form sample="1">
+        <header>
+            <button id="button_rented" name="action_rented_button" string="Rent" class="btn-primary" type="object"/>
+            <button id="button_progress" name="action_progress_button" string="Project" class="btn-primary" type="object"/>
+            <button id="button_loan" name="action_loan_button" string="Loan" class="btn-primary" type="object"/>
+            <field name="land_status"  widget="statusbar"/>
+        </header>
         <sheet string="Countries">
           <div class="oe_title">
                       <h1>
@@ -324,7 +351,7 @@
       <field name="name">rpi.land.view.list</field>
       <field name="model">rpi.land</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree sample="1">
           <field name="name"/>
           <field name="area" />
         <field name="region_id" />
@@ -350,8 +377,13 @@
       <field name="model">rpi.unit</field>
       <field name="mode">primary</field>
       <field name="arch" type="xml">
-        <form>
-            <header/>
+        <form sample="1">
+            <header>
+                <button id="button_rented" name="action_rented_button" string="Rent" class="btn-primary" type="object"/>
+                <button id="button_progress" name="action_progress_button" string="Project" class="btn-primary" type="object"/>
+                <button id="button_loan" name="action_loan_button" string="Loan" class="btn-primary" type="object"/>
+                <field name="unit_status" widget="statusbar"/>
+           </header>
            <sheet string="Unit">
     <div class="oe_title">
                 <h1>
@@ -382,6 +414,7 @@
           <group name="left">
               <field name="attachments"  widget="many2many_binary"/>
               <field name="unit_type" />
+              <field name="unit_status"/>
               <field name="rental_fee" />
               <field name="insurance_fee" />
               <field name="unit_stutes_id" />
@@ -476,7 +509,7 @@
       <field name="name">rpi.unit.view.list</field>
       <field name="model">rpi.unit</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree sample="1">
           <field name="name" />
           <field name="code" />
           <field name="bulding_id"/>
@@ -502,7 +535,7 @@
       <field name="model">rpi.building.stutes</field>
       <field name="mode">primary</field>
       <field name="arch" type="xml">
-      <form>
+      <form sample="1">
         <header/>
         <sheet string="Countries">
           <div class="oe_title">
